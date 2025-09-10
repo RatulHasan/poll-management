@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('votes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('poll_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('poll_id')->constrained()->onDelete('cascade');
             $table->foreignId('poll_option_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('ip_address', 45);
             $table->string('user_agent')->nullable();
             $table->timestamps();
 
-            $table->unique(['poll_id', 'user_id', 'ip_address'], 'unique_vote_per_poll');
+            // Remove user_id from unique constraint since we want to allow multiple users from same IP if authenticated
+            $table->unique(['poll_id', 'ip_address'], 'unique_vote_per_poll');
             $table->index('ip_address');
         });
     }
