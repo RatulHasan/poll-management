@@ -34,9 +34,40 @@ class CreatePollRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'options.min' => 'A poll must have at least 2 options.',
-            'options.*.distinct' => 'Poll options must be unique.',
+            'options.required' => 'Please provide poll options.',
+            'options.min' => 'Please provide at least 2 options for the poll.',
+            'options.*.required' => 'Poll options cannot be empty.',
+            'options.*.distinct' => 'Each poll option must be unique.',
+            'options.array' => 'Poll options must be provided as a list.',
             'expires_at.after' => 'The expiration date must be in the future.',
+            'title.required' => 'Please provide a title for the poll.',
+            'title.max' => 'The poll title cannot exceed 255 characters.',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $options = $this->input('options', []);
+
+            // If options array is empty but submitted
+            if (is_array($options) && empty($options)) {
+                $validator->errors()->add('options', 'Please provide at least 2 options for the poll.');
+            }
+
+            // If any option is empty string or whitespace only
+            foreach ($options as $index => $option) {
+                if (is_string($option) && trim($option) === '') {
+                    $validator->errors()->add(
+                        'options',
+                        'Poll options cannot be empty. Please provide text for all options.'
+                    );
+                    break;
+                }
+            }
+        });
     }
 }

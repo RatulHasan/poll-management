@@ -50,7 +50,7 @@ export default function Edit({ poll }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                    <div className="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
                         <div className="p-6">
                             <h2 className="mb-6 text-xl font-semibold text-gray-800 dark:text-gray-200">
                                 Edit Poll: {poll.title}
@@ -121,6 +121,17 @@ export default function Edit({ poll }: Props) {
                                                             e.target.value,
                                                         )
                                                     }
+                                                />
+                                                <InputError
+                                                    message={
+                                                        (
+                                                            errors as Record<
+                                                                string,
+                                                                string
+                                                            >
+                                                        )[`options.${index}`]
+                                                    }
+                                                    className="mt-2"
                                                 />
                                                 {data.options.length > 2 && (
                                                     <button

@@ -45,7 +45,7 @@ export default function Create() {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                    <div className="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
                         <div className="p-6">
                             <h2 className="mb-6 text-xl font-semibold text-gray-800 dark:text-gray-200">
                                 Create New Poll
@@ -101,34 +101,50 @@ export default function Create() {
                                     <InputLabel value="Poll Options" />
                                     <div className="space-y-2">
                                         {data.options.map((option, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex gap-2"
-                                            >
-                                                <TextInput
-                                                    type="text"
-                                                    value={option}
-                                                    className="mt-1 block w-full"
-                                                    placeholder={`Option ${index + 1}`}
-                                                    onChange={(e) =>
-                                                        updateOption(
-                                                            index,
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                />
-                                                {data.options.length > 2 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            removeOption(index)
+                                            <>
+                                                <div
+                                                    key={index}
+                                                    className="flex gap-2"
+                                                >
+                                                    <TextInput
+                                                        type="text"
+                                                        value={option}
+                                                        className="mt-1 block w-full"
+                                                        placeholder={`Option ${index + 1}`}
+                                                        onChange={(e) =>
+                                                            updateOption(
+                                                                index,
+                                                                e.target.value,
+                                                            )
                                                         }
-                                                        className="mt-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                )}
-                                            </div>
+                                                    />
+                                                    {data.options.length >
+                                                        2 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                removeOption(
+                                                                    index,
+                                                                )
+                                                            }
+                                                            className="mt-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <InputError
+                                                    message={
+                                                        (
+                                                            errors as Record<
+                                                                string,
+                                                                string
+                                                            >
+                                                        )[`options.${index}`]
+                                                    }
+                                                    className="mt-2"
+                                                />
+                                            </>
                                         ))}
                                         <InputError
                                             message={errors.options}

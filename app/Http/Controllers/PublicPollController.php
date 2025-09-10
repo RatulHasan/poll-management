@@ -28,7 +28,7 @@ class PublicPollController extends Controller
 
     public function show(Request $request, Poll $poll): Response
     {
-        if (!$poll->is_active || ($poll->expires_at && $poll->isExpired())) {
+        if (!$poll->is_active || $poll->isExpired()) {
             abort(404, 'Poll not found or has expired.');
         }
 
@@ -52,7 +52,7 @@ class PublicPollController extends Controller
 
     public function vote(CastVoteRequest $request, Poll $poll)
     {
-        if (!$poll->is_active || ($poll->expires_at && $poll->isExpired())) {
+        if (!$poll->is_active || $poll->isExpired()) {
             return redirect()->back()->withErrors(['vote' => 'This poll is not active or has expired.']);
         }
 

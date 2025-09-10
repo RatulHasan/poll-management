@@ -56,7 +56,7 @@ export default function Show({ poll, hasVoted, userVote, statistics }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                    <div className="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
                         <div className="p-6">
                             <h1 className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200">
                                 {poll.title}

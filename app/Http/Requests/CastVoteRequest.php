@@ -38,7 +38,7 @@ class CastVoteRequest extends FormRequest
         return [
             'vote' => [
                 function ($attribute, $value, $fail) use ($poll) {
-                    if (!$poll->is_active || ($poll->expires_at && $poll->isExpired())) {
+                    if (!$poll->is_active || $poll->isExpired()) {
                         $fail('This poll is not active or has expired.');
                     }
                 }

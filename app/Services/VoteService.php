@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class VoteService {
 
     public function castVote( Poll $poll, PollOption $option, string $ipAddress, ?User $user = null, ?string $userAgent = null ): Vote {
-        if ( ! $poll->is_active || ( $poll->expires_at && $poll->isExpired() ) ) {
+        if ( ! $poll->is_active || $poll->isExpired() ) {
             throw new \RuntimeException( 'This poll is not active or has expired.' );
         }
 

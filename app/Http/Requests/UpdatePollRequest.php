@@ -23,7 +23,7 @@ class UpdatePollRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['string', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_active' => ['boolean'],
             'expires_at' => [
@@ -39,9 +39,39 @@ class UpdatePollRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'options.min' => 'A poll must have at least 2 options.',
-            'options.*.distinct' => 'Poll options must be unique.',
+            'title.max' => 'The poll title cannot exceed 255 characters.',
+            'options.required' => 'Please provide poll options.',
+            'options.min' => 'Please provide at least 2 options for the poll.',
+            'options.array' => 'Poll options must be provided as a list.',
+            'options.*.required' => 'Poll options cannot be empty.',
+            'options.*.distinct' => 'Each poll option must be unique.',
             'expires_at.after' => 'The expiration date must be in the future.',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $options = $this->input('options', []);
+
+            // If options array is empty but submitted
+            if (is_array($options) && empty($options)) {
+                $validator->errors()->add('options', 'Please provide at least 2 options for the poll.');
+            }
+
+            // If any option is empty string or whitespace only
+            foreach ($options as $index => $option) {
+                if (is_string($option) && trim($option) === '') {
+                    $validator->errors()->add(
+                        'options',
+                        'Poll options cannot be empty. Please provide text for all options.'
+                    );
+                    break;
+                }
+            }
+        });
     }
 }
