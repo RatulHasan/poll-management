@@ -151,4 +151,46 @@ class VoteServiceTest extends TestCase
         $this->assertNotNull($userVote);
         $this->assertEquals($vote->id, $userVote->id);
     }
+    public function test_guest_and_logged_in_user_with_same_ip_can_both_vote(): void
+    {
+        $ip = '10.0.0.1';
+        // Logged in user votes first
+        $this->voteService->castVote($this->poll, $this->option, $ip, $this->user);
+
+        // Guest from same IP should still be able to vote
+        $guestVote = $this->voteService->castVote($this->poll, $this->option, $ip, null);
+
+        $this->assertDatabaseHas('votes', [
+            'id' => $guestVote->id,
+            'poll_id' => $this->poll->id,
+            'poll_option_id' => $this->option->id,
+            'user_id' => null,
+            'ip_address' => $ip,
+        ]);
+    }
+
+    public function test_prevents_guest_double_vote_but_allows_logged_in_after_guest_with_same_ip(): void
+    {
+        $ip = '10.0.0.2';
+        // Guest votes
+        $this->voteService->castVote($this->poll, $this->option, $ip, null);
+
+        // The same guest IP cannot vote again
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('You have already voted in this poll.');
+        try {
+            $this->voteService->castVote($this->poll, $this->option, $ip, null);
+        } finally {
+            // But a logged in user with the same IP should be allowed
+            $otherUser = User::factory()->create();
+            $vote = $this->voteService->castVote($this->poll, $this->option, $ip, $otherUser);
+            $this->assertDatabaseHas('votes', [
+                'id' => $vote->id,
+                'poll_id' => $this->poll->id,
+                'poll_option_id' => $this->option->id,
+                'user_id' => $otherUser->id,
+                'ip_address' => $ip,
+            ]);
+        }
+    }
 }

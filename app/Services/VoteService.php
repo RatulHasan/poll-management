@@ -26,8 +26,10 @@ class VoteService {
             $existingVote = Vote::where( 'poll_id', $poll->id )
                                 ->when( $user, function ( $query ) use ( $user ) {
                                     $query->where( 'user_id', $user->id );
-                                }, function ( $query ) use ( $ipAddress ) {
-                                    $query->where( 'ip_address', $ipAddress );
+                                } )
+                                ->when( ! $user, function ( $query ) use ( $ipAddress ) {
+                                    $query->whereNull( 'user_id' )
+                                          ->where( 'ip_address', $ipAddress );
                                 } )
                                 ->exists();
 
@@ -89,8 +91,10 @@ class VoteService {
         return Vote::where( 'poll_id', $poll->id )
                    ->when( $user, function ( $query ) use ( $user ) {
                        $query->where( 'user_id', $user->id );
-                   }, function ( $query ) use ( $ipAddress ) {
-                       $query->where( 'ip_address', $ipAddress );
+                   } )
+                   ->when( ! $user, function ( $query ) use ( $ipAddress ) {
+                       $query->whereNull( 'user_id' )
+                             ->where( 'ip_address', $ipAddress );
                    } )
                    ->exists();
     }
@@ -99,8 +103,10 @@ class VoteService {
         return Vote::where( 'poll_id', $poll->id )
                    ->when( $user, function ( $query ) use ( $user ) {
                        $query->where( 'user_id', $user->id );
-                   }, function ( $query ) use ( $ipAddress ) {
-                       $query->where( 'ip_address', $ipAddress );
+                   } )
+                   ->when( ! $user, function ( $query ) use ( $ipAddress ) {
+                       $query->whereNull( 'user_id' )
+                             ->where( 'ip_address', $ipAddress );
                    } )
                    ->with( 'option' )
                    ->first();
