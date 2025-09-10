@@ -31,7 +31,7 @@ cd poll-management
 
 2. Install PHP dependencies:
 ```bash
-composer install
+composer install --no-dev --optimize-autoloader
 ```
 
 3. Install Node.js dependencies:

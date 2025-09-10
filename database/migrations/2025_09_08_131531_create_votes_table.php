@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('user_agent')->nullable();
             $table->timestamps();
 
-            // Remove user_id from unique constraint since we want to allow multiple users from same IP if authenticated
-            $table->unique(['poll_id', 'ip_address'], 'unique_vote_per_poll');
+            $table->unique(['poll_id', 'user_id', 'ip_address'], 'unique_vote_per_poll');
             $table->index('ip_address');
         });
     }
